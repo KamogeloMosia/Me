@@ -1,0 +1,89 @@
+.inputContainer {
+  display: flex;
+  align-items: flex-end;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 0.75rem;
+  margin: 1rem 0;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.inputContainer:focus-within {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 20px rgba(157, 80, 187, 0.3);
+}
+
+.messageInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  resize: none;
+  outline: none;
+  font-family: inherit;
+  max-height: 150px;
+  padding: 0.25rem 0.5rem;
+  line-height: 1.5;
+}
+
+.messageInput::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.actionButton {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.actionButton:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.actionButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sendButton {
+  background: linear-gradient(135deg, #6e48aa 0%, #9d50bb 100%);
+  color: white;
+}
+
+.sendButton:hover:not(:disabled) {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, #7e58ba 0%, #ad60cb 100%);
+}
+
+@media (min-width: 768px) {
+  .inputContainer {
+    padding: 1rem;
+  }
+
+  .messageInput {
+    font-size: 1.1rem;
+  }
+
+  .actionButton {
+    width: 40px;
+    height: 40px;
+  }
+}

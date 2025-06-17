@@ -1,0 +1,63 @@
+.previewCard {
+  display: flex;
+  align-items: center;
+  background: rgba(30, 30, 60, 0.5);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 1rem;
+  min-width: 280px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  flex-shrink: 0;
+  gap: 1rem;
+}
+
+.previewCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.avatarContainer {
+  background: linear-gradient(135deg, #6e48aa 0%, #9d50bb 100%);
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.avatarContainer .material-icons-outlined {
+  font-size: 20px;
+  color: white;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.preview {
+  font-size: 0.8rem;
+  color: #a2a2a2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (min-width: 768px) {
+  .previewCard {
+    min-width: 300px;
+  }
+}

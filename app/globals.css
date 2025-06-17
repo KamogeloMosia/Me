@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background-start: #1a1a2e;
+  --background-end: #16213e;
+  --primary: #0f3460;
+  --secondary: #e94560;
+  --text: #ffffff;
+  --text-secondary: #a2a2a2;
+  --card-bg: rgba(30, 30, 60, 0.5);
+  --gradient-1: linear-gradient(90deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+  --gradient-2: linear-gradient(90deg, #e2b0ff 0%, #9f44d3 100%);
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --border-radius: 12px;
+  --transition: all 0.3s ease;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  height: 100%;
+}
+
+/* Minimalist Black & White Theme */
+body {
+  @apply bg-white text-black; /* Default to white background, black text */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
+    "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* Scrollbar styling for a more integrated look */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-200; /* Light gray track */
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-500 rounded; /* Medium gray thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-600; /* Darker gray on hover */
+}
+
+/* Animation for new elements */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+/* Ensure full height for html and body if not already set by Tailwind base */
+html,
+body,
+#__next {
+  height: 100%;
+}
