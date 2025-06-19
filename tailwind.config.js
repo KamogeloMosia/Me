@@ -62,7 +62,7 @@ module.exports = {
     themes: [
       {
         light: {
-          primary: "#000000",
+          primary: "#1f2937",
           "primary-content": "#ffffff",
           secondary: "#6b7280",
           "secondary-content": "#ffffff",
@@ -75,9 +75,9 @@ module.exports = {
           "base-300": "#e2e8f0",
           "base-content": "#1e293b",
           info: "#0ea5e9",
-          "info-content": "#000000",
+          "info-content": "#ffffff",
           success: "#22c55e",
-          "success-content": "#000000",
+          "success-content": "#ffffff",
           warning: "#f59e0b",
           "warning-content": "#000000",
           error: "#ef4444",

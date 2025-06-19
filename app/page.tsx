@@ -115,10 +115,34 @@ const ChatPage = () => {
   const loadInstalledModules = async () => {
     try {
       const response = await fetch("/api/modules")
+
+      // Check if the response is ok
+      if (!response.ok) {
+        console.warn(`Modules API returned ${response.status}: ${response.statusText}`)
+        setLoadedModules([])
+        return
+      }
+
+      // Check if the response is JSON
+      const contentType = response.headers.get("content-type")
+      if (!contentType || !contentType.includes("application/json")) {
+        console.warn("Modules API did not return JSON")
+        setLoadedModules([])
+        return
+      }
+
       const modules = await response.json()
-      setLoadedModules(modules)
+
+      // Ensure modules is an array
+      if (Array.isArray(modules)) {
+        setLoadedModules(modules)
+      } else {
+        console.warn("Modules API returned invalid data format")
+        setLoadedModules([])
+      }
     } catch (error) {
       console.error("Failed to load modules:", error)
+      setLoadedModules([])
     }
   }
 
@@ -240,7 +264,7 @@ const ChatPage = () => {
           />
 
           {/* Modal Content */}
-          <div className="relative theme-customizable-modal rounded-lg shadow-2xl border-2 p-6 w-full max-w-md mx-4 z-10">
+          <div className="relative bg-base-100 rounded-lg shadow-2xl border-2 p-6 w-full max-w-md mx-4 z-10">
             <h3 className="font-bold text-lg mb-4 text-base-content">Admin Access Required</h3>
             <p className="mb-4 text-base-content/80">Enter the admin access code to continue:</p>
             <input
@@ -279,8 +303,14 @@ const ChatPage = () => {
         <div className="navbar px-4 min-h-16 shadow-sm">
           <div className="navbar-start">
             <div className="flex items-center">
-              <div className="bg-primary text-primary-content px-6 py-3 rounded-lg flex items-center border border-base-300 shadow-sm">
-                <span className="text-sm font-bold tracking-wide" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+              <div className="bg-base-100 text-base-content px-6 py-3 rounded-full flex items-center border-2 border-primary shadow-lg">
+                <div className="w-8 h-8 rounded-full overflow-hidden mr-3 flex-shrink-0">
+                  <img src="/placeholder-logo.png" alt="Dev & Career Bot" className="w-full h-full object-cover" />
+                </div>
+                <span
+                  className="text-sm font-bold tracking-wide text-primary"
+                  style={{ fontFamily: "'Montserrat', sans-serif" }}
+                >
                   Dev & Career Bot
                 </span>
               </div>
