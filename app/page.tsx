@@ -207,7 +207,7 @@ const ChatPage = () => {
   }
 
   const handleAdminAccess = () => {
-    if (adminCode === "admin123") {
+    if (adminCode === "1234") {
       setShowAdminModal(false)
       setAdminCode("")
       window.location.href = "/admin"
@@ -413,12 +413,8 @@ const ChatPage = () => {
                         )}
                       </div>
                     ) : (
-                      <div className="w-12 h-12 bg-neutral text-neutral-content rounded-lg flex items-center justify-center shadow-md overflow-hidden">
-                        <img
-                          src="/placeholder.svg?height=48&width=48"
-                          alt="AI Assistant"
-                          className="w-full h-full object-cover"
-                        />
+                      <div className="w-12 h-12 bg-neutral text-neutral-content rounded-full flex items-center justify-center shadow-md overflow-hidden">
+                        <img src="/ai-avatar.png" alt="AI Assistant" className="w-full h-full object-cover" />
                       </div>
                     )}
                   </div>
@@ -475,12 +471,8 @@ const ChatPage = () => {
             {/* Loading State */}
             {isLoading && (
               <div className="flex items-start gap-4 animate-in fade-in duration-300">
-                <div className="w-12 h-12 bg-neutral text-neutral-content rounded-lg flex items-center justify-center shadow-md overflow-hidden">
-                  <img
-                    src="/placeholder.svg?height=48&width=48"
-                    alt="AI Assistant"
-                    className="w-full h-full object-cover animate-pulse"
-                  />
+                <div className="w-12 h-12 bg-neutral text-neutral-content rounded-full flex items-center justify-center shadow-md overflow-hidden">
+                  <img src="/ai-avatar.png" alt="AI Assistant" className="w-full h-full object-cover animate-pulse" />
                 </div>
                 <div className="relative ml-3">
                   <div className="absolute top-6 left-full w-4 h-0.5 bg-base-300" />
