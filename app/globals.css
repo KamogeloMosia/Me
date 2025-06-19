@@ -2,21 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/* CSS Custom Properties for Theme Customization */
 :root {
-  --background-start: #1a1a2e;
-  --background-end: #16213e;
-  --primary: #0f3460;
-  --secondary: #e94560;
-  --text: #ffffff;
-  --text-secondary: #a2a2a2;
-  --card-bg: rgba(30, 30, 60, 0.5);
-  --gradient-1: linear-gradient(90deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
-  --gradient-2: linear-gradient(90deg, #e2b0ff 0%, #9f44d3 100%);
-  --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --border-radius: 12px;
-  --transition: all 0.3s ease;
+  --modal-bg-opacity: 0.95;
+  --panel-bg-opacity: 0.98;
+  --border-opacity: 0.3;
+  --border-color: 220 220 220;
+  --modal-border-color: 200 200 200;
+  --panel-border-color: 210 210 210;
 }
 
+[data-theme="dark"] {
+  --border-color: 60 60 60;
+  --modal-border-color: 80 80 80;
+  --panel-border-color: 70 70 70;
+}
+
+/* Base styles */
 * {
   box-sizing: border-box;
   padding: 0;
@@ -25,49 +27,512 @@
 
 html,
 body {
-  max-width: 100vw;
-  overflow-x: hidden;
   height: 100%;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Minimalist Black & White Theme */
 body {
-  @apply bg-white text-black; /* Default to white background, black text */
+  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
-    "Open Sans", "Helvetica Neue", sans-serif;
+  background-color: hsl(var(--b1));
+  color: hsl(var(--bc));
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-button {
-  font-family: inherit;
-}
-
-/* Scrollbar styling for a more integrated look */
+/* Custom scrollbar with theme support */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-gray-200; /* Light gray track */
+  background: hsl(var(--b2));
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gray-500 rounded; /* Medium gray thumb */
+  background: hsl(var(--bc) / 0.2);
+  border-radius: 0.25rem;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-600; /* Darker gray on hover */
+  background: hsl(var(--bc) / 0.3);
 }
 
-/* Animation for new elements */
-@keyframes fadeIn {
+/* Material Icons sizing */
+.material-icons {
+  font-feature-settings: "liga";
+  -webkit-font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Chat bubble improvements */
+.chat-bubble {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Better mobile touch targets */
+@media (max-width: 1023px) {
+  .btn-circle {
+    min-height: 2.5rem;
+    height: 2.5rem;
+    width: 2.5rem;
+  }
+
+  .btn-sm {
+    min-height: 2rem;
+    height: 2rem;
+  }
+}
+
+/* Menu active state */
+.menu li > *:where(.active) {
+  background-color: hsl(var(--p));
+  color: hsl(var(--pc));
+}
+
+/* Bottom navigation improvements */
+.btm-nav {
+  height: 4rem;
+  border-top: 1px solid hsl(var(--b3));
+  background-color: hsl(var(--b1));
+}
+
+.btm-nav > * {
+  gap: 0.25rem;
+  color: hsl(var(--bc));
+}
+
+/* Responsive text */
+@media (max-width: 640px) {
+  .chat-bubble {
+    font-size: 0.875rem;
+  }
+
+  .btm-nav-label {
+    font-size: 0.75rem;
+  }
+}
+
+/* Focus states for accessibility */
+.btn:focus-visible,
+.textarea:focus-visible {
+  outline: 2px solid hsl(var(--p));
+  outline-offset: 2px;
+}
+
+/* Loading animation */
+.loading-dots {
+  animation-duration: 1.4s;
+}
+
+/* Card hover effects */
+.card:hover {
+  transform: translateY(-1px);
+  transition: transform 0.2s ease;
+}
+
+/* Consistent border radius */
+.rounded-lg {
+  border-radius: 0.5rem !important;
+}
+
+.rounded-md {
+  border-radius: 0.375rem !important;
+}
+
+.rounded-sm {
+  border-radius: 0.25rem !important;
+}
+
+/* Modal improvements - Solid and visible */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(12px);
+}
+
+.modal-box {
+  background: hsl(var(--b1) / var(--modal-bg-opacity));
+  color: hsl(var(--bc));
+  border: 2px solid rgb(var(--modal-border-color) / var(--border-opacity));
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border-radius: 0.75rem;
+  position: relative;
+  z-index: 10000;
+  max-width: 32rem;
+  width: 100%;
+  margin: 1rem;
+  backdrop-filter: blur(20px);
+}
+
+/* Ensure high contrast for modal text */
+.modal-box h3,
+.modal-box p,
+.modal-box label {
+  color: hsl(var(--bc)) !important;
+  font-weight: 500;
+}
+
+.modal-box input {
+  background: hsl(var(--b2) / var(--panel-bg-opacity));
+  color: hsl(var(--bc));
+  border: 1px solid rgb(var(--panel-border-color) / var(--border-opacity));
+  backdrop-filter: blur(10px);
+}
+
+.modal-box input:focus {
+  outline: 2px solid hsl(var(--p));
+  outline-offset: 2px;
+  border-color: hsl(var(--p));
+  background: hsl(var(--b2));
+}
+
+/* Panel improvements */
+.panel,
+.card,
+.admin-card {
+  background: hsl(var(--b1) / var(--panel-bg-opacity)) !important;
+  border: 1px solid rgb(var(--panel-border-color) / var(--border-opacity)) !important;
+  backdrop-filter: blur(15px);
+  color: hsl(var(--bc)) !important;
+}
+
+/* Badge improvements */
+.badge {
+  border-radius: 0.5rem;
+  background-color: hsl(var(--b2));
+  color: hsl(var(--bc));
+  border: 1px solid hsl(var(--b3));
+}
+
+.badge-outline {
+  background-color: transparent;
+  border: 1px solid hsl(var(--bc) / 0.3);
+  color: hsl(var(--bc));
+}
+
+.badge-success {
+  background-color: hsl(var(--su));
+  color: hsl(var(--suc));
+  border: 1px solid hsl(var(--su));
+}
+
+.badge-error {
+  background-color: hsl(var(--er));
+  color: hsl(var(--erc));
+  border: 1px solid hsl(var(--er));
+}
+
+.badge-warning {
+  background-color: hsl(var(--wa));
+  color: hsl(var(--wac));
+  border: 1px solid hsl(var(--wa));
+}
+
+/* Input improvements */
+.input,
+.textarea,
+.file-input {
+  border-radius: 0.5rem;
+  background: hsl(var(--b2) / var(--panel-bg-opacity));
+  border: 1px solid rgb(var(--border-color) / var(--border-opacity));
+  backdrop-filter: blur(10px);
+  color: hsl(var(--bc));
+  transition: all 0.2s ease;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: hsl(var(--bc) / 0.5);
+}
+
+.input:focus,
+.textarea:focus,
+.file-input:focus {
+  background: hsl(var(--b2));
+  border-color: hsl(var(--p));
+  outline: 2px solid hsl(var(--p) / 0.2);
+  outline-offset: 2px;
+}
+
+/* Button improvements */
+.btn {
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: hsl(var(--bc));
+  border: 1px solid transparent;
+}
+
+.btn-ghost:hover {
+  background-color: hsl(var(--b2));
+  color: hsl(var(--bc));
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: hsl(var(--bc));
+  border: 1px solid hsl(var(--bc) / 0.3);
+}
+
+.btn-outline:hover {
+  background-color: hsl(var(--bc));
+  color: hsl(var(--b1));
+}
+
+.btn-primary {
+  background-color: hsl(var(--p));
+  color: hsl(var(--pc));
+  border: 1px solid hsl(var(--p));
+}
+
+.btn-primary:hover {
+  background-color: hsl(var(--p) / 0.9);
+}
+
+.btn-success {
+  background-color: hsl(var(--su));
+  color: hsl(var(--suc));
+  border: 1px solid hsl(var(--su));
+}
+
+.btn-warning {
+  background-color: hsl(var(--wa));
+  color: hsl(var(--wac));
+  border: 1px solid hsl(var(--wa));
+}
+
+.btn-error {
+  background-color: hsl(var(--er));
+  color: hsl(var(--erc));
+  border: 1px solid hsl(var(--er));
+}
+
+/* Dropdown improvements */
+.dropdown-content {
+  border-radius: 0.75rem;
+  background: hsl(var(--b1) / var(--panel-bg-opacity));
+  border: 1px solid rgb(var(--panel-border-color) / var(--border-opacity));
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(20px);
+  color: hsl(var(--bc));
+}
+
+.dropdown-content li > * {
+  color: hsl(var(--bc));
+  transition: all 0.2s ease;
+}
+
+.dropdown-content li > *:hover {
+  background-color: hsl(var(--b2));
+  color: hsl(var(--bc));
+}
+
+/* Table improvements */
+.table {
+  background-color: transparent;
+  color: hsl(var(--bc));
+}
+
+.table th {
+  background-color: hsl(var(--b2));
+  color: hsl(var(--bc));
+  border-bottom: 1px solid hsl(var(--b3));
+}
+
+.table td {
+  border-bottom: 1px solid hsl(var(--b3));
+  color: hsl(var(--bc));
+}
+
+.table-zebra tbody tr:nth-child(even) {
+  background-color: hsl(var(--b2) / 0.5);
+}
+
+/* Admin panel specific styles */
+.admin-panel {
+  background: linear-gradient(135deg, hsl(var(--b2)) 0%, hsl(var(--b3)) 50%, hsl(var(--b2)) 100%);
+  min-height: 100vh;
+  color: hsl(var(--bc));
+}
+
+/* Enhanced card shadows for admin */
+.admin-card {
+  background: hsl(var(--b1) / var(--panel-bg-opacity)) !important;
+  border: 1px solid rgb(var(--panel-border-color) / var(--border-opacity)) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(15px);
+  color: hsl(var(--bc)) !important;
+}
+
+.admin-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s ease;
+}
+
+/* Better contrast for admin elements */
+.admin-navbar {
+  background: hsl(var(--b1) / var(--panel-bg-opacity));
+  border-bottom: 2px solid rgb(var(--panel-border-color) / var(--border-opacity));
+  backdrop-filter: blur(20px);
+  color: hsl(var(--bc));
+}
+
+/* Navbar improvements */
+.navbar {
+  background: hsl(var(--b1) / var(--panel-bg-opacity)) !important;
+  border-bottom: 1px solid rgb(var(--border-color) / var(--border-opacity)) !important;
+  backdrop-filter: blur(20px);
+  color: hsl(var(--bc)) !important;
+}
+
+/* Message bubble improvements */
+.message-bubble {
+  background: hsl(var(--b1) / var(--panel-bg-opacity));
+  border: 1px solid rgb(var(--border-color) / var(--border-opacity));
+  backdrop-filter: blur(10px);
+  color: hsl(var(--bc));
+}
+
+.message-bubble.user {
+  background: hsl(var(--p) / 0.95);
+  border: 1px solid hsl(var(--p) / 0.3);
+  color: hsl(var(--pc));
+}
+
+/* Stats improvements */
+.stat {
+  background-color: transparent;
+  color: hsl(var(--bc));
+}
+
+.stat-title {
+  color: hsl(var(--bc) / 0.7);
+}
+
+.stat-value {
+  color: hsl(var(--bc));
+}
+
+.stat-figure {
+  color: hsl(var(--bc));
+}
+
+/* Progress bar improvements */
+.progress {
+  background-color: hsl(var(--b3));
+}
+
+.progress-primary::-webkit-progress-value {
+  background-color: hsl(var(--p));
+}
+
+.progress-primary::-moz-progress-bar {
+  background-color: hsl(var(--p));
+}
+
+/* Loading spinner improvements */
+.loading {
+  color: hsl(var(--bc));
+}
+
+.loading-spinner {
+  border-color: hsl(var(--bc) / 0.2);
+  border-top-color: hsl(var(--p));
+}
+
+.loading-dots > div {
+  background-color: hsl(var(--bc));
+}
+
+/* Range slider improvements */
+.range {
+  background-color: hsl(var(--b3));
+}
+
+.range::-webkit-slider-thumb {
+  background-color: hsl(var(--p));
+  border: 2px solid hsl(var(--b1));
+}
+
+.range::-moz-range-thumb {
+  background-color: hsl(var(--p));
+  border: 2px solid hsl(var(--b1));
+}
+
+.range-primary::-webkit-slider-track {
+  background-color: hsl(var(--p) / 0.3);
+}
+
+.range-primary::-moz-range-track {
+  background-color: hsl(var(--p) / 0.3);
+}
+
+/* Code block improvements */
+.mockup-code {
+  background-color: hsl(var(--b2));
+  color: hsl(var(--bc));
+  border: 1px solid hsl(var(--b3));
+}
+
+.mockup-code pre {
+  background-color: transparent;
+  color: hsl(var(--bc));
+}
+
+/* Prose improvements for dark mode */
+.prose {
+  color: hsl(var(--bc));
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  color: hsl(var(--bc));
+}
+
+.prose p {
+  color: hsl(var(--bc) / 0.8);
+}
+
+.prose code {
+  background-color: hsl(var(--b2));
+  color: hsl(var(--bc));
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+}
+
+/* File input improvements */
+.file-input {
+  background-color: hsl(var(--b2));
+  color: hsl(var(--bc));
+  border: 1px solid hsl(var(--b3));
+}
+
+.file-input::file-selector-button {
+  background-color: hsl(var(--p));
+  color: hsl(var(--pc));
+  border: none;
+  padding: 0.5rem 1rem;
+  margin-right: 1rem;
+  border-radius: 0.375rem;
+}
+
+/* Smooth animations */
+@keyframes fade-in {
   from {
     opacity: 0;
     transform: translateY(10px);
@@ -79,12 +544,112 @@ button {
 }
 
 .animate-in {
-  animation: fadeIn 0.3s ease forwards;
+  animation: fade-in 0.3s ease-out;
 }
 
-/* Ensure full height for html and body if not already set by Tailwind base */
-html,
-body,
-#__next {
-  height: 100%;
+/* Better focus indicators */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid hsl(var(--p));
+  outline-offset: 2px;
+}
+
+/* Theme customization utility classes */
+.theme-customizable-modal {
+  background: hsl(var(--b1) / var(--modal-bg-opacity));
+  border-color: rgb(var(--modal-border-color) / var(--border-opacity));
+  color: hsl(var(--bc));
+}
+
+.theme-customizable-panel {
+  background: hsl(var(--b1) / var(--panel-bg-opacity));
+  border-color: rgb(var(--panel-border-color) / var(--border-opacity));
+  color: hsl(var(--bc));
+}
+
+.theme-customizable-border {
+  border-color: rgb(var(--border-color) / var(--border-opacity));
+}
+
+/* Dark mode specific overrides */
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+[data-theme="dark"] .bg-black {
+  background-color: hsl(var(--b1)) !important;
+  color: hsl(var(--bc)) !important;
+  border: 1px solid hsl(var(--b3));
+}
+
+[data-theme="dark"] .text-white {
+  color: hsl(var(--bc)) !important;
+}
+
+[data-theme="dark"] .bg-gray-700 {
+  background-color: hsl(var(--b2)) !important;
+}
+
+[data-theme="dark"] .bg-gray-600 {
+  background-color: hsl(var(--b3)) !important;
+}
+
+[data-theme="dark"] .bg-purple-700 {
+  background-color: hsl(var(--p)) !important;
+}
+
+[data-theme="dark"] .bg-purple-600 {
+  background-color: hsl(var(--p) / 0.9) !important;
+}
+
+/* Light mode specific overrides */
+[data-theme="light"] {
+  color-scheme: light;
+}
+
+/* Ensure proper contrast for all text elements */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span,
+div,
+label,
+.text-base-content {
+  color: hsl(var(--bc)) !important;
+}
+
+.text-base-content\/70 {
+  color: hsl(var(--bc) / 0.7) !important;
+}
+
+.text-base-content\/80 {
+  color: hsl(var(--bc) / 0.8) !important;
+}
+
+.text-base-content\/50 {
+  color: hsl(var(--bc) / 0.5) !important;
+}
+
+.text-base-content\/30 {
+  color: hsl(var(--bc) / 0.3) !important;
+}
+
+/* Error text color */
+.text-error {
+  color: hsl(var(--er)) !important;
+}
+
+/* Primary content color */
+.text-primary-content {
+  color: hsl(var(--pc)) !important;
+}
+
+/* Neutral content color */
+.text-neutral-content {
+  color: hsl(var(--nc)) !important;
 }
