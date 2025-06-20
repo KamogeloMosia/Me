@@ -16,6 +16,49 @@ Your project is live at:
 
 **[https://vercel.com/britishandbohemians-projects/v0-next-js-project-setup](https://vercel.com/britishandbohemians-projects/v0-next-js-project-setup)**
 
+## GitHub Pages Deployment
+
+This project is configured for automatic deployment to GitHub Pages with proper CSS and static asset handling.
+
+### Manual Deployment
+
+1. Build the project for static export:
+   ```bash
+   npm run build:static
+   ```
+
+2. The static files will be generated in the `out/` directory with all CSS and assets properly included
+
+3. Verify the build:
+   ```bash
+   npm run verify
+   ```
+
+4. Push the `out/` directory to the `gh-pages` branch or enable GitHub Pages in your repository settings
+
+### Automatic Deployment
+
+The project includes a GitHub Actions workflow that automatically builds and deploys to GitHub Pages when you push to the main branch. The build process ensures:
+- ✅ CSS files are properly exported and optimized
+- ✅ All static assets are copied to the output directory
+- ✅ `.nojekyll` file is created to prevent Jekyll processing
+- ✅ Custom 404 page is generated for better user experience
+
+### Local Development
+
+```bash
+npm run dev
+```
+
+### Build Commands
+
+- `npm run build` - Standard Next.js build
+- `npm run build:static` - Build optimized for static export (includes CSS and assets)
+- `npm run verify` - Verify that all necessary files are in the build output
+- `npm run export` - Alias for standard build
+- `npm run deploy` - Build, verify, and show deployment info
+- `npm run gh-pages` - Build for GitHub Pages deployment
+
 ## Build your app
 
 Continue building your app on:

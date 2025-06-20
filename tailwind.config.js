@@ -1,115 +1,33 @@
-/** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: ["class", '[data-theme="dark"]'],
-  content: [
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "*.{js,ts,jsx,tsx,mdx}",
-  ],
-  theme: {
-    extend: {
-      colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
-        secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
-        },
-        destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
-        },
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
-        },
-        accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
-        },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
-        },
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
-        },
-      },
-      borderRadius: {
-        lg: "0.5rem",
-        md: "0.375rem",
-        sm: "0.25rem",
-      },
-      screens: {
-        xs: "475px",
-      },
-      fontFamily: {
-        sans: ["Montserrat", "system-ui", "sans-serif"],
-      },
-    },
-  },
-  plugins: [require("tailwindcss-animate"), require("daisyui")],
-  daisyui: {
-    themes: [
-      {
-        light: {
-          primary: "#1f2937",
-          "primary-content": "#ffffff",
-          secondary: "#6b7280",
-          "secondary-content": "#ffffff",
-          accent: "#374151",
-          "accent-content": "#ffffff",
-          neutral: "#1f2937",
-          "neutral-content": "#ffffff",
-          "base-100": "#ffffff",
-          "base-200": "#f8fafc",
-          "base-300": "#e2e8f0",
-          "base-content": "#1e293b",
-          info: "#0ea5e9",
-          "info-content": "#ffffff",
-          success: "#22c55e",
-          "success-content": "#ffffff",
-          warning: "#f59e0b",
-          "warning-content": "#000000",
-          error: "#ef4444",
-          "error-content": "#ffffff",
-        },
-        dark: {
-          primary: "#ffffff",
-          "primary-content": "#000000",
-          secondary: "#9ca3af",
-          "secondary-content": "#000000",
-          accent: "#d1d5db",
-          "accent-content": "#000000",
-          neutral: "#374151",
-          "neutral-content": "#ffffff",
-          "base-100": "#1f2937",
-          "base-200": "#374151",
-          "base-300": "#4b5563",
-          "base-content": "#f9fafb",
-          info: "#0ea5e9",
-          "info-content": "#ffffff",
-          success: "#22c55e",
-          "success-content": "#ffffff",
-          warning: "#f59e0b",
-          "warning-content": "#ffffff",
-          error: "#ef4444",
-          "error-content": "#ffffff",
-        },
-      },
+    content: [
+        "./src/**/*.{js,jsx,ts,tsx}",
     ],
-    base: true,
-    styled: true,
-    utils: true,
-    logs: false,
-  },
+    theme: {
+        extend: {
+            fontFamily: {
+                poppins: ['Poppins', 'sans-serif'],
+            },
+            container: {
+                center: true,
+                padding: {
+                    DEFAULT: '1rem',
+                    sm: '2rem',
+                    lg: '4rem',
+                    xl: '5rem',
+                },
+            },
+        },
+    },
+    plugins: [require("daisyui")],
+    daisyui: {
+        themes: [
+            {
+                light: {
+                    ...require("daisyui/src/theming/themes")["light"],
+                    primary: "#2563eb",
+                    "primary-focus": "#1d4ed8",
+                },
+            },
+        ],
+    },
 }
