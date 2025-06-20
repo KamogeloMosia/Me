@@ -48,7 +48,7 @@ body {
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
 
-    /* Theme Custom Properties */
+    /* Custom theme variables with fallbacks */
     --theme-primary: #1f2937;
     --theme-secondary: #6b7280;
     --theme-accent: #374151;
@@ -62,7 +62,7 @@ body {
     --theme-scale: 1;
     --theme-font-weight: 400;
 
-    /* Admin Panel Opacity Settings */
+    /* Modal and panel opacity settings */
     --modal-bg-opacity: 0.95;
     --panel-bg-opacity: 0.98;
     --border-opacity: 0.3;
@@ -105,7 +105,9 @@ body {
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
 
-    /* Dark mode theme overrides */
+    /* Dark mode custom theme variables */
+    --theme-background: #1f2937;
+    --theme-background-secondary: #374151;
     --border-color: 60, 60, 60;
     --modal-border-color: 80, 80, 80;
     --panel-border-color: 70, 70, 70;
@@ -118,131 +120,284 @@ body {
   }
   body {
     @apply bg-background text-foreground;
-    font-size: var(--theme-font-size);
-    font-weight: var(--theme-font-weight);
-    transform: scale(var(--theme-scale));
+    font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
+    font-size: var(--theme-font-size, 16px);
+    font-weight: var(--theme-font-weight, 400);
+  }
+}
+
+/* Custom theme-aware components */
+@layer components {
+  .message-bubble {
+    @apply bg-base-100 border border-base-300;
+    background-color: var(--theme-background-secondary, hsl(var(--card)));
+    border-color: rgba(var(--border-color, 220, 220, 220), var(--border-opacity, 0.3));
+    transition: all 0.2s ease;
+  }
+
+  .message-bubble.user {
+    background-color: var(--theme-primary, hsl(var(--primary)));
+    color: white;
+  }
+
+  .message-bubble:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Preview components for theme editor */
+  .preview-container {
+    background-color: var(--theme-background, #ffffff);
+    border-color: var(--theme-primary, #1f2937);
+    font-size: var(--theme-font-size, 16px);
+    font-weight: var(--theme-font-weight, 400);
+    transform: scale(var(--theme-scale, 1));
     transform-origin: top left;
     transition: all 0.2s ease;
   }
-}
 
-/* Theme Preview Styles */
-.preview-container {
-  background-color: var(--theme-background);
-  border-color: var(--theme-accent);
-  font-size: var(--theme-font-size);
-  font-weight: var(--theme-font-weight);
-  transform: scale(var(--theme-scale));
-  transform-origin: top left;
-  transition: all 0.2s ease;
-}
+  .preview-title {
+    color: var(--theme-primary, #1f2937);
+  }
 
-.preview-title {
-  color: var(--theme-primary);
-}
+  .preview-text {
+    color: var(--theme-secondary, #6b7280);
+  }
 
-.preview-text {
-  color: var(--theme-secondary);
-}
+  .preview-btn-primary {
+    background-color: var(--theme-primary, #1f2937);
+    transition: all 0.2s ease;
+  }
 
-.preview-btn-primary {
-  background-color: var(--theme-primary);
-  transition: all 0.2s ease;
-}
+  .preview-btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
 
-.preview-btn-secondary {
-  background-color: var(--theme-secondary);
-  transition: all 0.2s ease;
-}
+  .preview-btn-secondary {
+    background-color: var(--theme-secondary, #6b7280);
+    transition: all 0.2s ease;
+  }
 
-.preview-btn-accent {
-  background-color: var(--theme-accent);
-  transition: all 0.2s ease;
-}
+  .preview-btn-secondary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
 
-.preview-card {
-  background-color: var(--theme-background-secondary);
-  border-color: var(--theme-accent);
-  color: var(--theme-primary);
-}
+  .preview-btn-accent {
+    background-color: var(--theme-accent, #374151);
+    transition: all 0.2s ease;
+  }
 
-.preview-success {
-  background-color: var(--theme-success);
-}
+  .preview-btn-accent:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
 
-.preview-warning {
-  background-color: var(--theme-warning);
-}
+  .preview-card {
+    background-color: var(--theme-background-secondary, #f8fafc);
+    border-color: var(--theme-primary, #1f2937);
+    color: var(--theme-secondary, #6b7280);
+  }
 
-.preview-error {
-  background-color: var(--theme-error);
-}
+  .preview-success {
+    background-color: var(--theme-success, #22c55e);
+  }
 
-.preview-info {
-  background-color: var(--theme-info);
-}
+  .preview-warning {
+    background-color: var(--theme-warning, #f59e0b);
+  }
 
-/* Message Bubble Styles */
-.message-bubble {
-  background-color: hsl(var(--b2));
-  border: 1px solid hsl(var(--b3));
-  transition: all 0.2s ease;
-}
+  .preview-error {
+    background-color: var(--theme-error, #ef4444);
+  }
 
-.message-bubble.user {
-  background-color: hsl(var(--p));
-  color: hsl(var(--pc));
-}
+  .preview-info {
+    background-color: var(--theme-info, #0ea5e9);
+  }
 
-/* Admin Panel Styles */
-.admin-panel {
-  background-color: hsl(var(--b1));
-  font-size: var(--theme-font-size);
-  font-weight: var(--theme-font-weight);
-}
+  /* Ensure modals and dropdowns are visible */
+  .modal-backdrop {
+    background-color: rgba(0, 0, 0, var(--modal-bg-opacity, 0.7));
+    backdrop-filter: blur(4px);
+  }
 
-.admin-navbar {
-  background-color: rgba(var(--panel-border-color), var(--panel-bg-opacity));
-  border-color: rgba(var(--panel-border-color), var(--border-opacity));
-  backdrop-filter: blur(8px);
-}
+  .modal-content {
+    background-color: var(--theme-background, hsl(var(--background)));
+    border: 2px solid rgba(var(--modal-border-color, 200, 200, 200), var(--border-opacity, 0.3));
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
 
-.admin-card {
-  background-color: rgba(var(--panel-border-color), var(--panel-bg-opacity));
-  border: 1px solid rgba(var(--panel-border-color), var(--border-opacity));
-  backdrop-filter: blur(4px);
-}
+  .dropdown-content {
+    background-color: var(--theme-background, hsl(var(--background)));
+    border: 1px solid rgba(var(--panel-border-color, 210, 210, 210), var(--border-opacity, 0.3));
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
 
-.theme-customizable-modal {
-  background-color: rgba(var(--modal-border-color), var(--modal-bg-opacity));
-  border-color: rgba(var(--modal-border-color), var(--border-opacity));
-  backdrop-filter: blur(8px);
-}
+  /* Ensure buttons maintain their styling */
+  .btn-theme-primary {
+    background-color: var(--theme-primary, #1f2937) !important;
+    border-color: var(--theme-primary, #1f2937) !important;
+    color: white !important;
+  }
 
-/* Responsive scaling */
-@media (max-width: 768px) {
-  body {
-    transform: scale(calc(var(--theme-scale) * 0.9));
+  .btn-theme-secondary {
+    background-color: var(--theme-secondary, #6b7280) !important;
+    border-color: var(--theme-secondary, #6b7280) !important;
+    color: white !important;
+  }
+
+  .btn-theme-accent {
+    background-color: var(--theme-accent, #374151) !important;
+    border-color: var(--theme-accent, #374151) !important;
+    color: white !important;
+  }
+
+  /* Navbar styling */
+  .navbar {
+    background-color: var(--theme-background, hsl(var(--background)));
+    border-bottom: 1px solid rgba(var(--border-color, 220, 220, 220), var(--border-opacity, 0.3));
+  }
+
+  /* Chat area styling */
+  .chat-area {
+    background-color: var(--theme-background-secondary, hsl(var(--muted)));
+  }
+
+  /* Input styling */
+  .message-input {
+    background-color: var(--theme-background, hsl(var(--background)));
+    border-color: rgba(var(--border-color, 220, 220, 220), var(--border-opacity, 0.3));
+    font-size: var(--theme-font-size, 16px);
+    font-weight: var(--theme-font-weight, 400);
+  }
+
+  .message-input:focus {
+    border-color: var(--theme-primary, hsl(var(--primary)));
+    box-shadow: 0 0 0 2px rgba(var(--theme-primary, 31, 41, 55), 0.2);
+  }
+
+  /* Loading animation */
+  .loading-dots {
+    color: var(--theme-primary, hsl(var(--primary)));
+  }
+
+  /* Ensure proper scaling for all elements */
+  .scaled-content {
+    transform: scale(var(--theme-scale, 1));
+    transform-origin: top left;
+    transition: transform 0.2s ease;
+  }
+
+  /* Fix for potential layout shifts */
+  .theme-transition {
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+
+  /* Ensure text remains readable */
+  .theme-text-primary {
+    color: var(--theme-primary, hsl(var(--foreground)));
+  }
+
+  .theme-text-secondary {
+    color: var(--theme-secondary, hsl(var(--muted-foreground)));
+  }
+
+  /* Avatar and profile image consistency */
+  .profile-avatar {
+    border: 2px solid var(--theme-primary, hsl(var(--primary)));
+  }
+
+  /* FAB button styling */
+  .fab-button {
+    background-color: var(--theme-primary, hsl(var(--primary))) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease;
+  }
+
+  .fab-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .fab-secondary {
+    background-color: var(--theme-secondary, hsl(var(--secondary))) !important;
+  }
+
+  .fab-accent {
+    background-color: var(--theme-accent, hsl(var(--accent))) !important;
   }
 }
 
-/* Smooth transitions for all theme changes */
-* {
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+/* Ensure Google Fonts load properly */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap");
+
+/* Prevent flash of unstyled content */
+.theme-loading {
+  visibility: hidden;
 }
 
-/* Button hover effects with theme colors */
-.btn-primary:hover {
-  background-color: var(--theme-primary);
-  filter: brightness(1.1);
+.theme-loaded {
+  visibility: visible;
+  animation: fadeIn 0.3s ease-in;
 }
 
-.btn-secondary:hover {
-  background-color: var(--theme-secondary);
-  filter: brightness(1.1);
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-.btn-accent:hover {
-  background-color: var(--theme-accent);
-  filter: brightness(1.1);
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .scaled-content {
+    transform: scale(calc(var(--theme-scale, 1) * 0.95));
+  }
+
+  .preview-container {
+    transform: scale(calc(var(--theme-scale, 1) * 0.9));
+  }
+}
+
+/* Print styles to maintain appearance */
+@media print {
+  .message-bubble {
+    background-color: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+  }
+
+  .message-bubble.user {
+    background-color: #1f2937 !important;
+    color: white !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .message-bubble {
+    border-width: 2px;
+  }
+
+  .btn-theme-primary,
+  .btn-theme-secondary,
+  .btn-theme-accent {
+    border-width: 2px !important;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .theme-transition,
+  .message-bubble,
+  .preview-container,
+  .fab-button {
+    transition: none !important;
+  }
+
+  .scaled-content {
+    transition: none !important;
+  }
 }

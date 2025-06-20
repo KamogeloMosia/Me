@@ -46,7 +46,7 @@ const themes = {
     typography: {
       fontSize: 16,
       scale: 1.0,
-      fontWeight: "normal",
+      fontWeight: "400",
     },
   },
   ocean: {
@@ -70,7 +70,7 @@ const themes = {
     typography: {
       fontSize: 16,
       scale: 1.0,
-      fontWeight: "normal",
+      fontWeight: "400",
     },
   },
   forest: {
@@ -94,7 +94,7 @@ const themes = {
     typography: {
       fontSize: 16,
       scale: 1.0,
-      fontWeight: "normal",
+      fontWeight: "400",
     },
   },
   sunset: {
@@ -118,7 +118,7 @@ const themes = {
     typography: {
       fontSize: 16,
       scale: 1.0,
-      fontWeight: "normal",
+      fontWeight: "400",
     },
   },
   purple: {
@@ -142,7 +142,7 @@ const themes = {
     typography: {
       fontSize: 16,
       scale: 1.0,
-      fontWeight: "normal",
+      fontWeight: "400",
     },
   },
   rose: {
@@ -166,7 +166,7 @@ const themes = {
     typography: {
       fontSize: 16,
       scale: 1.0,
-      fontWeight: "normal",
+      fontWeight: "400",
     },
   },
   cyber: {
@@ -190,7 +190,7 @@ const themes = {
     typography: {
       fontSize: 16,
       scale: 1.0,
-      fontWeight: "normal",
+      fontWeight: "400",
     },
   },
   minimal: {
@@ -214,7 +214,7 @@ const themes = {
     typography: {
       fontSize: 16,
       scale: 1.0,
-      fontWeight: "normal",
+      fontWeight: "400",
     },
   },
 }
@@ -281,18 +281,29 @@ const ChatPage = () => {
           applyFullTheme(customThemeData)
         } catch (error) {
           console.error("Error loading custom theme:", error)
+          // Fallback to default theme
+          const defaultTheme = themes.default
+          setCustomTheme(defaultTheme)
+          applyFullTheme(defaultTheme)
         }
       } else if (savedColorTheme && themes[savedColorTheme as keyof typeof themes]) {
         setCurrentTheme(savedColorTheme)
         const themeData = themes[savedColorTheme as keyof typeof themes]
         setCustomTheme(themeData)
         applyFullTheme(themeData)
+      } else {
+        // Apply default theme
+        const defaultTheme = themes.default
+        setCustomTheme(defaultTheme)
+        applyFullTheme(defaultTheme)
       }
 
       setIsThemeLoaded(true)
     }
 
-    initializeTheme()
+    // Add a small delay to ensure DOM is ready
+    const timer = setTimeout(initializeTheme, 100)
+    return () => clearTimeout(timer)
   }, [])
 
   useEffect(() => {
@@ -340,95 +351,165 @@ const ChatPage = () => {
   const applyFullTheme = (theme: any) => {
     const root = document.documentElement
 
-    // Apply colors directly as CSS custom properties
-    root.style.setProperty("--theme-primary", theme.colors.primary)
-    root.style.setProperty("--theme-secondary", theme.colors.secondary)
-    root.style.setProperty("--theme-accent", theme.colors.accent)
-    root.style.setProperty("--theme-background", theme.colors.background)
-    root.style.setProperty("--theme-background-secondary", theme.colors.backgroundSecondary)
-    root.style.setProperty("--theme-success", theme.colors.success)
-    root.style.setProperty("--theme-warning", theme.colors.warning)
-    root.style.setProperty("--theme-error", theme.colors.error)
-    root.style.setProperty("--theme-info", theme.colors.info)
-
-    // Apply typography
-    root.style.setProperty("--theme-font-size", `${theme.typography.fontSize}px`)
-    root.style.setProperty("--theme-scale", theme.typography.scale.toString())
-    root.style.setProperty("--theme-font-weight", theme.typography.fontWeight)
-
-    // Convert hex to HSL for DaisyUI
-    const hexToHsl = (hex: string) => {
-      const r = Number.parseInt(hex.slice(1, 3), 16) / 255
-      const g = Number.parseInt(hex.slice(3, 5), 16) / 255
-      const b = Number.parseInt(hex.slice(5, 7), 16) / 255
-
-      const max = Math.max(r, g, b)
-      const min = Math.min(r, g, b)
-      let h = 0,
-        s = 0,
-        l = (max + min) / 2
-
-      if (max !== min) {
-        const d = max - min
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
-        switch (max) {
-          case r:
-            h = (g - b) / d + (g < b ? 6 : 0)
-            break
-          case g:
-            h = (b - r) / d + 2
-            break
-          case b:
-            h = (r - g) / d + 4
-            break
-        }
-        h /= 6
-      }
-
-      return `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`
+    // Ensure theme object has all required properties
+    const safeTheme = {
+      colors: {
+        primary: theme?.colors?.primary || "#1f2937",
+        secondary: theme?.colors?.secondary || "#6b7280",
+        accent: theme?.colors?.accent || "#374151",
+        background: theme?.colors?.background || "#ffffff",
+        backgroundSecondary: theme?.colors?.backgroundSecondary || "#f8fafc",
+        success: theme?.colors?.success || "#22c55e",
+        warning: theme?.colors?.warning || "#f59e0b",
+        error: theme?.colors?.error || "#ef4444",
+        info: theme?.colors?.info || "#0ea5e9",
+        buttonPrimary: theme?.colors?.buttonPrimary || theme?.colors?.primary || "#1f2937",
+        buttonSecondary: theme?.colors?.buttonSecondary || theme?.colors?.secondary || "#6b7280",
+        buttonAccent: theme?.colors?.buttonAccent || theme?.colors?.accent || "#374151",
+      },
+      typography: {
+        fontSize: theme?.typography?.fontSize || 16,
+        scale: theme?.typography?.scale || 1.0,
+        fontWeight: theme?.typography?.fontWeight || "400",
+      },
     }
 
-    // Apply DaisyUI theme colors
-    root.style.setProperty("--p", hexToHsl(theme.colors.primary))
-    root.style.setProperty("--s", hexToHsl(theme.colors.secondary))
-    root.style.setProperty("--a", hexToHsl(theme.colors.accent))
-    root.style.setProperty("--b1", hexToHsl(theme.colors.background))
-    root.style.setProperty("--b2", hexToHsl(theme.colors.backgroundSecondary))
-    root.style.setProperty("--su", hexToHsl(theme.colors.success))
-    root.style.setProperty("--wa", hexToHsl(theme.colors.warning))
-    root.style.setProperty("--er", hexToHsl(theme.colors.error))
-    root.style.setProperty("--in", hexToHsl(theme.colors.info))
+    // Apply colors directly as CSS custom properties with fallbacks
+    root.style.setProperty("--theme-primary", safeTheme.colors.primary)
+    root.style.setProperty("--theme-secondary", safeTheme.colors.secondary)
+    root.style.setProperty("--theme-accent", safeTheme.colors.accent)
+    root.style.setProperty("--theme-background", safeTheme.colors.background)
+    root.style.setProperty("--theme-background-secondary", safeTheme.colors.backgroundSecondary)
+    root.style.setProperty("--theme-success", safeTheme.colors.success)
+    root.style.setProperty("--theme-warning", safeTheme.colors.warning)
+    root.style.setProperty("--theme-error", safeTheme.colors.error)
+    root.style.setProperty("--theme-info", safeTheme.colors.info)
+
+    // Apply typography with validation
+    const fontSize = Math.max(12, Math.min(24, safeTheme.typography.fontSize))
+    const scale = Math.max(0.8, Math.min(1.5, safeTheme.typography.scale))
+    const fontWeight = safeTheme.typography.fontWeight
+
+    root.style.setProperty("--theme-font-size", `${fontSize}px`)
+    root.style.setProperty("--theme-scale", scale.toString())
+    root.style.setProperty("--theme-font-weight", fontWeight)
+
+    // Convert hex to HSL for DaisyUI with error handling
+    const hexToHsl = (hex: string) => {
+      try {
+        // Remove # if present
+        hex = hex.replace("#", "")
+
+        // Ensure hex is 6 characters
+        if (hex.length === 3) {
+          hex = hex
+            .split("")
+            .map((char) => char + char)
+            .join("")
+        }
+
+        if (hex.length !== 6) {
+          throw new Error("Invalid hex color")
+        }
+
+        const r = Number.parseInt(hex.slice(0, 2), 16) / 255
+        const g = Number.parseInt(hex.slice(2, 4), 16) / 255
+        const b = Number.parseInt(hex.slice(4, 6), 16) / 255
+
+        const max = Math.max(r, g, b)
+        const min = Math.min(r, g, b)
+        let h = 0,
+          s = 0,
+          l = (max + min) / 2
+
+        if (max !== min) {
+          const d = max - min
+          s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
+          switch (max) {
+            case r:
+              h = (g - b) / d + (g < b ? 6 : 0)
+              break
+            case g:
+              h = (b - r) / d + 2
+              break
+            case b:
+              h = (r - g) / d + 4
+              break
+          }
+          h /= 6
+        }
+
+        return `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`
+      } catch (error) {
+        console.warn("Error converting hex to HSL:", hex, error)
+        return "0 0% 50%" // Fallback gray
+      }
+    }
+
+    // Apply DaisyUI theme colors with error handling
+    try {
+      root.style.setProperty("--p", hexToHsl(safeTheme.colors.primary))
+      root.style.setProperty("--s", hexToHsl(safeTheme.colors.secondary))
+      root.style.setProperty("--a", hexToHsl(safeTheme.colors.accent))
+      root.style.setProperty("--b1", hexToHsl(safeTheme.colors.background))
+      root.style.setProperty("--b2", hexToHsl(safeTheme.colors.backgroundSecondary))
+      root.style.setProperty("--su", hexToHsl(safeTheme.colors.success))
+      root.style.setProperty("--wa", hexToHsl(safeTheme.colors.warning))
+      root.style.setProperty("--er", hexToHsl(safeTheme.colors.error))
+      root.style.setProperty("--in", hexToHsl(safeTheme.colors.info))
+    } catch (error) {
+      console.error("Error applying DaisyUI colors:", error)
+    }
+
+    // Force a repaint to ensure changes are applied
+    document.body.style.display = "none"
+    document.body.offsetHeight // Trigger reflow
+    document.body.style.display = ""
   }
 
   const handleThemeChange = (themeKey: string) => {
-    setCurrentTheme(themeKey)
-    const themeData = themes[themeKey as keyof typeof themes]
-    setCustomTheme(themeData)
-    applyFullTheme(themeData)
-    localStorage.setItem("colorTheme", themeKey)
-    localStorage.setItem("customTheme", JSON.stringify(themeData))
+    try {
+      setCurrentTheme(themeKey)
+      const themeData = themes[themeKey as keyof typeof themes]
+      if (themeData) {
+        setCustomTheme(themeData)
+        applyFullTheme(themeData)
+        localStorage.setItem("colorTheme", themeKey)
+        localStorage.setItem("customTheme", JSON.stringify(themeData))
+      }
+    } catch (error) {
+      console.error("Error changing theme:", error)
+    }
   }
 
   const handleCustomThemeChange = (category: string, key: string, value: any) => {
-    const newTheme = {
-      ...customTheme,
-      [category]: {
-        ...customTheme[category as keyof typeof customTheme],
-        [key]: value,
-      },
+    try {
+      const newTheme = {
+        ...customTheme,
+        [category]: {
+          ...customTheme[category as keyof typeof customTheme],
+          [key]: value,
+        },
+      }
+      setCustomTheme(newTheme)
+      applyFullTheme(newTheme)
+      localStorage.setItem("customTheme", JSON.stringify(newTheme))
+    } catch (error) {
+      console.error("Error updating custom theme:", error)
     }
-    setCustomTheme(newTheme)
-    applyFullTheme(newTheme)
-    localStorage.setItem("customTheme", JSON.stringify(newTheme))
   }
 
   const resetToDefaultTheme = () => {
-    const defaultTheme = themes.default
-    setCustomTheme(defaultTheme)
-    setCurrentTheme("default")
-    applyFullTheme(defaultTheme)
-    localStorage.setItem("colorTheme", "default")
-    localStorage.setItem("customTheme", JSON.stringify(defaultTheme))
+    try {
+      const defaultTheme = themes.default
+      setCustomTheme(defaultTheme)
+      setCurrentTheme("default")
+      applyFullTheme(defaultTheme)
+      localStorage.setItem("colorTheme", "default")
+      localStorage.setItem("customTheme", JSON.stringify(defaultTheme))
+    } catch (error) {
+      console.error("Error resetting theme:", error)
+    }
   }
 
   const handleProfileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -496,25 +577,22 @@ const ChatPage = () => {
   // Don't render until theme is loaded to prevent flash
   if (!isThemeLoaded) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center theme-loading">
         <div className="loading loading-spinner loading-lg"></div>
       </div>
     )
   }
 
   return (
-    <>
+    <div className="theme-loaded">
       <GoogleAssets />
 
       {/* Simplified Theme Customization Modal */}
       {showCustomizeModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div
-            className="absolute inset-0 bg-black bg-opacity-70 backdrop-blur-sm"
-            onClick={() => setShowCustomizeModal(false)}
-          />
-          <div className="relative bg-base-100 rounded-lg shadow-2xl border-2 p-6 w-full max-w-4xl mx-4 z-10 max-h-[85vh] overflow-y-auto">
-            <h3 className="font-bold text-xl mb-6 text-base-content flex items-center gap-3">
+          <div className="absolute inset-0 modal-backdrop" onClick={() => setShowCustomizeModal(false)} />
+          <div className="relative modal-content rounded-lg p-6 w-full max-w-4xl mx-4 z-10 max-h-[85vh] overflow-y-auto">
+            <h3 className="font-bold text-xl mb-6 theme-text-primary flex items-center gap-3">
               <span className="material-icons">tune</span>
               Customize Theme
             </h3>
@@ -524,43 +602,43 @@ const ChatPage = () => {
               <div className="space-y-6">
                 {/* Colors */}
                 <div className="space-y-4">
-                  <h4 className="font-semibold text-base-content border-b pb-2">Colors</h4>
+                  <h4 className="font-semibold theme-text-primary border-b pb-2">Colors</h4>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium mb-2">Primary</label>
+                      <label className="block text-sm font-medium mb-2 theme-text-primary">Primary</label>
                       <input
                         type="color"
                         value={customTheme.colors.primary}
                         onChange={(e) => handleCustomThemeChange("colors", "primary", e.target.value)}
-                        className="w-full h-10 rounded border"
+                        className="w-full h-10 rounded border theme-transition"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2">Secondary</label>
+                      <label className="block text-sm font-medium mb-2 theme-text-primary">Secondary</label>
                       <input
                         type="color"
                         value={customTheme.colors.secondary}
                         onChange={(e) => handleCustomThemeChange("colors", "secondary", e.target.value)}
-                        className="w-full h-10 rounded border"
+                        className="w-full h-10 rounded border theme-transition"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2">Background</label>
+                      <label className="block text-sm font-medium mb-2 theme-text-primary">Background</label>
                       <input
                         type="color"
                         value={customTheme.colors.background}
                         onChange={(e) => handleCustomThemeChange("colors", "background", e.target.value)}
-                        className="w-full h-10 rounded border"
+                        className="w-full h-10 rounded border theme-transition"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2">Accent</label>
+                      <label className="block text-sm font-medium mb-2 theme-text-primary">Accent</label>
                       <input
                         type="color"
                         value={customTheme.colors.accent}
                         onChange={(e) => handleCustomThemeChange("colors", "accent", e.target.value)}
-                        className="w-full h-10 rounded border"
+                        className="w-full h-10 rounded border theme-transition"
                       />
                     </div>
                   </div>
@@ -568,10 +646,10 @@ const ChatPage = () => {
 
                 {/* Typography */}
                 <div className="space-y-4">
-                  <h4 className="font-semibold text-base-content border-b pb-2">Typography</h4>
+                  <h4 className="font-semibold theme-text-primary border-b pb-2">Typography</h4>
 
                   <div>
-                    <label className="block text-sm font-medium mb-2">
+                    <label className="block text-sm font-medium mb-2 theme-text-primary">
                       Font Size: {customTheme.typography.fontSize}px
                     </label>
                     <input
@@ -585,7 +663,7 @@ const ChatPage = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-2">
+                    <label className="block text-sm font-medium mb-2 theme-text-primary">
                       UI Scale: {customTheme.typography.scale.toFixed(1)}x
                     </label>
                     <input
@@ -600,11 +678,11 @@ const ChatPage = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-2">Font Weight</label>
+                    <label className="block text-sm font-medium mb-2 theme-text-primary">Font Weight</label>
                     <select
                       value={customTheme.typography.fontWeight}
                       onChange={(e) => handleCustomThemeChange("typography", "fontWeight", e.target.value)}
-                      className="select select-bordered w-full"
+                      className="select select-bordered w-full theme-transition"
                     >
                       <option value="300">Light</option>
                       <option value="400">Normal</option>
@@ -618,7 +696,7 @@ const ChatPage = () => {
 
               {/* Right Panel - Live Preview */}
               <div className="space-y-4">
-                <h4 className="font-semibold text-base-content border-b pb-2">Live Preview</h4>
+                <h4 className="font-semibold theme-text-primary border-b pb-2">Live Preview</h4>
 
                 <div className="preview-container p-6 rounded-lg border-2 space-y-4">
                   <div className="preview-header">
@@ -652,13 +730,13 @@ const ChatPage = () => {
             </div>
 
             <div className="flex gap-3 justify-end mt-6 pt-4 border-t">
-              <button className="btn btn-outline" onClick={resetToDefaultTheme}>
+              <button className="btn btn-outline theme-transition" onClick={resetToDefaultTheme}>
                 Reset
               </button>
-              <button className="btn btn-outline" onClick={() => setShowCustomizeModal(false)}>
+              <button className="btn btn-outline theme-transition" onClick={() => setShowCustomizeModal(false)}>
                 Close
               </button>
-              <button className="btn btn-primary" onClick={() => setShowCustomizeModal(false)}>
+              <button className="btn btn-primary theme-transition" onClick={() => setShowCustomizeModal(false)}>
                 Apply
               </button>
             </div>
@@ -669,12 +747,9 @@ const ChatPage = () => {
       {/* Theme Selection Modal */}
       {showThemeModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div
-            className="absolute inset-0 bg-black bg-opacity-70 backdrop-blur-sm"
-            onClick={() => setShowThemeModal(false)}
-          />
-          <div className="relative bg-base-100 rounded-lg shadow-2xl border-2 p-6 w-full max-w-4xl mx-4 z-10 max-h-[80vh] overflow-y-auto">
-            <h3 className="font-bold text-xl mb-6 text-base-content flex items-center gap-3">
+          <div className="absolute inset-0 modal-backdrop" onClick={() => setShowThemeModal(false)} />
+          <div className="relative modal-content rounded-lg p-6 w-full max-w-4xl mx-4 z-10 max-h-[80vh] overflow-y-auto">
+            <h3 className="font-bold text-xl mb-6 theme-text-primary flex items-center gap-3">
               <span className="material-icons">palette</span>
               Choose Your Theme
             </h3>
@@ -683,7 +758,7 @@ const ChatPage = () => {
               {Object.entries(themes).map(([key, theme]) => (
                 <div
                   key={key}
-                  className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 hover:scale-105 ${
+                  className={`p-4 rounded-lg border-2 cursor-pointer theme-transition hover:scale-105 ${
                     currentTheme === key ? "border-primary bg-primary/10" : "border-base-300 hover:border-primary/50"
                   }`}
                   onClick={() => handleThemeChange(key)}
@@ -692,7 +767,7 @@ const ChatPage = () => {
                     <span className="material-icons text-2xl" style={{ color: theme.colors.primary }}>
                       {theme.icon}
                     </span>
-                    <h4 className="font-semibold text-base-content">{theme.name}</h4>
+                    <h4 className="font-semibold theme-text-primary">{theme.name}</h4>
                     {currentTheme === key && <span className="material-icons text-primary ml-auto">check_circle</span>}
                   </div>
 
@@ -709,14 +784,14 @@ const ChatPage = () => {
                       ))}
                   </div>
 
-                  <div className="text-xs text-base-content/70">Primary: {theme.colors.primary}</div>
+                  <div className="text-xs theme-text-secondary">Primary: {theme.colors.primary}</div>
                 </div>
               ))}
             </div>
 
             <div className="flex gap-3 justify-between mt-6 pt-4 border-t border-base-300">
               <button
-                className="btn btn-secondary rounded-lg"
+                className="btn btn-secondary rounded-lg theme-transition"
                 onClick={() => {
                   setShowThemeModal(false)
                   setShowCustomizeModal(true)
@@ -726,10 +801,16 @@ const ChatPage = () => {
                 Advanced Customize
               </button>
               <div className="flex gap-3">
-                <button className="btn btn-outline rounded-lg" onClick={() => setShowThemeModal(false)}>
+                <button
+                  className="btn btn-outline rounded-lg theme-transition"
+                  onClick={() => setShowThemeModal(false)}
+                >
                   Close
                 </button>
-                <button className="btn btn-primary rounded-lg" onClick={() => setShowThemeModal(false)}>
+                <button
+                  className="btn btn-primary rounded-lg theme-transition"
+                  onClick={() => setShowThemeModal(false)}
+                >
                   Apply Theme
                 </button>
               </div>
@@ -742,19 +823,19 @@ const ChatPage = () => {
       {showAdminModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div
-            className="absolute inset-0 bg-black bg-opacity-70 backdrop-blur-sm"
+            className="absolute inset-0 modal-backdrop"
             onClick={() => {
               setShowAdminModal(false)
               setAdminCode("")
             }}
           />
-          <div className="relative bg-base-100 rounded-lg shadow-2xl border-2 p-6 w-full max-w-md mx-4 z-10">
-            <h3 className="font-bold text-lg mb-4 text-base-content">Admin Access Required</h3>
-            <p className="mb-4 text-base-content/80">Enter the admin access code to continue:</p>
+          <div className="relative modal-content rounded-lg p-6 w-full max-w-md mx-4 z-10">
+            <h3 className="font-bold text-lg mb-4 theme-text-primary">Admin Access Required</h3>
+            <p className="mb-4 theme-text-secondary">Enter the admin access code to continue:</p>
             <input
               type="password"
               placeholder="Enter access code"
-              className="input input-bordered w-full rounded-lg mb-4"
+              className="input input-bordered w-full rounded-lg mb-4 theme-transition"
               value={adminCode}
               onChange={(e) => setAdminCode(e.target.value)}
               onKeyDown={(e) => {
@@ -764,11 +845,14 @@ const ChatPage = () => {
               }}
             />
             <div className="flex gap-3 justify-end">
-              <button className="btn btn-primary rounded-lg text-primary-content" onClick={handleAdminAccess}>
+              <button
+                className="btn btn-primary rounded-lg theme-transition text-primary-content"
+                onClick={handleAdminAccess}
+              >
                 Access Admin
               </button>
               <button
-                className="btn btn-outline rounded-lg"
+                className="btn btn-outline rounded-lg theme-transition"
                 onClick={() => {
                   setShowAdminModal(false)
                   setAdminCode("")
@@ -783,17 +867,17 @@ const ChatPage = () => {
 
       {/* Main Content */}
       <div
-        className="flex flex-col min-h-screen"
+        className="flex flex-col min-h-screen theme-transition"
         style={{
-          fontSize: `var(--font-size-base, ${customTheme.typography.fontSize}px)`,
-          fontWeight: customTheme.typography.fontWeight,
+          fontSize: `var(--theme-font-size, 16px)`,
+          fontWeight: `var(--theme-font-weight, 400)`,
         }}
       >
         {/* Top Navigation */}
-        <div className="navbar px-4 min-h-16 shadow-sm">
+        <div className="navbar px-4 min-h-16 shadow-sm theme-transition">
           <div className="navbar-start">
             <div className="flex items-center">
-              <div className="bg-base-100 text-base-content px-6 py-3 rounded-full flex items-center border-2 border-primary shadow-lg">
+              <div className="bg-base-100 text-base-content px-6 py-3 rounded-full flex items-center border-2 border-primary shadow-lg profile-avatar theme-transition">
                 <div className="w-8 h-8 rounded-full overflow-hidden mr-3 flex-shrink-0">
                   <img src="/placeholder-logo.png" alt="Dev & Career Bot" className="w-full h-full object-cover" />
                 </div>
@@ -811,7 +895,7 @@ const ChatPage = () => {
 
           <div className="navbar-end flex items-center gap-3">
             <button
-              className="btn btn-ghost btn-circle"
+              className="btn btn-ghost btn-circle theme-transition"
               onClick={toggleTheme}
               title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
             >
@@ -819,12 +903,12 @@ const ChatPage = () => {
             </button>
 
             <div className="dropdown dropdown-end">
-              <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
+              <div tabIndex={0} role="button" className="btn btn-ghost btn-circle theme-transition">
                 {profileImage ? (
                   <img
                     src={profileImage || "/placeholder.svg"}
                     alt="Profile"
-                    className="w-8 h-8 rounded-lg object-cover"
+                    className="w-8 h-8 rounded-lg object-cover profile-avatar"
                   />
                 ) : (
                   <span className="material-icons">person</span>
@@ -834,7 +918,7 @@ const ChatPage = () => {
                 <li>
                   <button
                     onClick={() => profileInputRef.current?.click()}
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-base-200"
+                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-base-200 theme-transition"
                   >
                     <span className="material-icons">upload</span>
                     <span className="font-medium">Upload Profile Picture</span>
@@ -843,7 +927,7 @@ const ChatPage = () => {
                 <li>
                   <button
                     onClick={() => setShowThemeModal(true)}
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-base-200"
+                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-base-200 theme-transition"
                   >
                     <span className="material-icons">palette</span>
                     <span className="font-medium">Choose Theme</span>
@@ -852,7 +936,7 @@ const ChatPage = () => {
                 <li>
                   <button
                     onClick={() => setShowCustomizeModal(true)}
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-base-200"
+                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-base-200 theme-transition"
                   >
                     <span className="material-icons">tune</span>
                     <span className="font-medium">Advanced Customize</span>
@@ -861,7 +945,7 @@ const ChatPage = () => {
                 <li>
                   <button
                     onClick={() => setShowAdminModal(true)}
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-base-200"
+                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-base-200 theme-transition"
                   >
                     <span className="material-icons">admin_panel_settings</span>
                     <span className="font-medium">Admin Panel</span>
@@ -873,7 +957,7 @@ const ChatPage = () => {
                       setProfileImage(null)
                       localStorage.removeItem("profileImage")
                     }}
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-base-200 text-error"
+                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-base-200 text-error theme-transition"
                   >
                     <span className="material-icons">delete</span>
                     <span className="font-medium">Remove Picture</span>
@@ -888,7 +972,7 @@ const ChatPage = () => {
         <input ref={profileInputRef} type="file" accept="image/*" onChange={handleProfileUpload} className="hidden" />
 
         {/* Chat Messages */}
-        <div className="flex-1 overflow-y-auto bg-base-300 p-6">
+        <div className="flex-1 overflow-y-auto chat-area p-6 theme-transition">
           <div className="max-w-4xl mx-auto space-y-6">
             {messages.map((msg, index) => {
               const isExpanded = expandedMessages.has(msg.id)
@@ -904,14 +988,12 @@ const ChatPage = () => {
                   style={{
                     animationDelay: `${index * 100}ms`,
                     animationFillMode: "both",
-                    transform: `scale(${customTheme.typography.scale})`,
-                    transformOrigin: msg.role === "user" ? "top right" : "top left",
                   }}
                 >
                   {/* Avatar Circle */}
                   <div className="flex-shrink-0">
                     {msg.role === "user" ? (
-                      <div className="w-12 h-12 bg-black text-white rounded-lg flex items-center justify-center shadow-md overflow-hidden">
+                      <div className="w-12 h-12 bg-black text-white rounded-lg flex items-center justify-center shadow-md overflow-hidden theme-transition">
                         {profileImage ? (
                           <img
                             src={profileImage || "/placeholder.svg"}
@@ -923,14 +1005,14 @@ const ChatPage = () => {
                         )}
                       </div>
                     ) : (
-                      <div className="w-12 h-12 bg-neutral text-neutral-content rounded-full flex items-center justify-center shadow-md overflow-hidden">
+                      <div className="w-12 h-12 bg-neutral text-neutral-content rounded-full flex items-center justify-center shadow-md overflow-hidden theme-transition">
                         <img src="/ai-avatar.png" alt="AI Assistant" className="w-full h-full object-cover" />
                       </div>
                     )}
                   </div>
 
                   {/* Message Content with Pointer */}
-                  <div className={`relative max-w-2xl ${msg.role === "user" ? "mr-3" : "ml-3"}`}>
+                  <div className={`relative max-w-2xl scaled-content ${msg.role === "user" ? "mr-3" : "ml-3"}`}>
                     {/* Pointer Line */}
                     <div
                       className={`absolute top-6 w-4 h-0.5 bg-base-300 ${
@@ -940,13 +1022,13 @@ const ChatPage = () => {
 
                     {/* Message Bubble */}
                     <div
-                      className={`relative p-5 rounded-lg shadow-sm transition-all duration-200 hover:shadow-md ${
-                        msg.role === "user" ? "message-bubble user" : "message-bubble"
+                      className={`relative p-5 rounded-lg shadow-sm message-bubble ${
+                        msg.role === "user" ? "user" : ""
                       }`}
                     >
                       <div
                         className={`text-sm leading-relaxed whitespace-pre-wrap break-words font-medium ${
-                          msg.role === "user" ? "text-primary-content" : "text-base-content"
+                          msg.role === "user" ? "text-white" : "theme-text-primary"
                         }`}
                       >
                         {displayContent}
@@ -956,8 +1038,8 @@ const ChatPage = () => {
                       {isLongMessage && (
                         <button
                           onClick={() => toggleMessageExpansion(msg.id)}
-                          className={`mt-3 text-xs opacity-70 hover:opacity-100 transition-opacity font-semibold ${
-                            msg.role === "user" ? "text-primary-content" : "text-primary"
+                          className={`mt-3 text-xs opacity-70 hover:opacity-100 theme-transition font-semibold ${
+                            msg.role === "user" ? "text-white" : "theme-text-primary"
                           }`}
                         >
                           {isExpanded ? "Show less" : "Show more"}
@@ -966,7 +1048,7 @@ const ChatPage = () => {
 
                       {/* Timestamp */}
                       <div
-                        className={`mt-3 text-xs opacity-60 font-light ${msg.role === "user" ? "text-right" : "text-left"}`}
+                        className={`mt-3 text-xs opacity-60 font-light ${msg.role === "user" ? "text-right text-white" : "text-left theme-text-secondary"}`}
                       >
                         {new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                       </div>
@@ -980,14 +1062,8 @@ const ChatPage = () => {
 
             {/* Loading State */}
             {isLoading && (
-              <div
-                className="flex items-start gap-4 animate-in fade-in duration-300"
-                style={{
-                  transform: `scale(${customTheme.typography.scale})`,
-                  transformOrigin: "top left",
-                }}
-              >
-                <div className="w-12 h-12 bg-neutral text-neutral-content rounded-full flex items-center justify-center shadow-md overflow-hidden">
+              <div className="flex items-start gap-4 animate-in fade-in duration-300 scaled-content">
+                <div className="w-12 h-12 bg-neutral text-neutral-content rounded-full flex items-center justify-center shadow-md overflow-hidden theme-transition">
                   <img src="/ai-avatar.png" alt="AI Assistant" className="w-full h-full object-cover animate-pulse" />
                 </div>
                 <div className="relative ml-3">
@@ -995,7 +1071,7 @@ const ChatPage = () => {
                   <div className="relative message-bubble p-5 rounded-lg shadow-sm">
                     <div className="flex items-center gap-3">
                       <span className="loading loading-dots loading-sm"></span>
-                      <span className="text-sm opacity-70 font-medium">AI is thinking...</span>
+                      <span className="text-sm opacity-70 font-medium theme-text-secondary">AI is thinking...</span>
                     </div>
                   </div>
                 </div>
@@ -1005,7 +1081,7 @@ const ChatPage = () => {
         </div>
 
         {/* Message Input */}
-        <div className="border-t p-4">
+        <div className="border-t p-4 theme-transition">
           <div className="max-w-4xl mx-auto">
             <form onSubmit={handleSubmit} className="flex items-center gap-3">
               <div className="flex-1">
@@ -1019,12 +1095,8 @@ const ChatPage = () => {
                       handleSubmit(e)
                     }
                   }}
-                  className="w-full resize-none min-h-[3rem] max-h-32 text-sm font-medium rounded-lg p-3 outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full resize-none min-h-[3rem] max-h-32 text-sm font-medium rounded-lg p-3 outline-none focus:ring-2 focus:ring-primary focus:border-transparent message-input"
                   rows={1}
-                  style={{
-                    fontSize: `${customTheme.typography.fontSize}px`,
-                    fontWeight: customTheme.typography.fontWeight,
-                  }}
                 />
               </div>
               <div className="relative">
@@ -1033,37 +1105,34 @@ const ChatPage = () => {
                   <div className="absolute bottom-full right-0 mb-3 flex flex-col gap-2 animate-in fade-in duration-200">
                     <button
                       type="button"
-                      className="btn btn-sm btn-secondary rounded-lg w-10 h-10 min-h-10 p-0 flex items-center justify-center shadow-lg"
+                      className="fab-button fab-secondary rounded-lg w-10 h-10 min-h-10 p-0 flex items-center justify-center"
                       onClick={() => setIsFabOpen(false)}
                       title="Attach File"
-                      style={{ backgroundColor: customTheme.colors.buttonSecondary }}
                     >
-                      <span className="material-icons text-sm">attach_file</span>
+                      <span className="material-icons text-sm text-white">attach_file</span>
                     </button>
                     <button
                       type="button"
-                      className="btn btn-sm btn-secondary rounded-lg w-10 h-10 min-h-10 p-0 flex items-center justify-center shadow-lg"
+                      className="fab-button fab-secondary rounded-lg w-10 h-10 min-h-10 p-0 flex items-center justify-center"
                       onClick={() => setIsFabOpen(false)}
                       title="Voice Input"
-                      style={{ backgroundColor: customTheme.colors.buttonSecondary }}
                     >
-                      <span className="material-icons text-sm">mic</span>
+                      <span className="material-icons text-sm text-white">mic</span>
                     </button>
                     <button
                       type="button"
-                      className="btn btn-sm btn-secondary rounded-lg w-10 h-10 min-h-10 p-0 flex items-center justify-center shadow-lg"
+                      className="fab-button fab-secondary rounded-lg w-10 h-10 min-h-10 p-0 flex items-center justify-center"
                       onClick={() => setIsFabOpen(false)}
                       title="Upload Image"
-                      style={{ backgroundColor: customTheme.colors.buttonSecondary }}
                     >
-                      <span className="material-icons text-sm">image</span>
+                      <span className="material-icons text-sm text-white">image</span>
                     </button>
                     {/* Module Actions */}
                     {loadedModules.map((module, index) => (
                       <button
                         key={index}
                         type="button"
-                        className="btn btn-sm btn-accent rounded-lg w-10 h-10 min-h-10 p-0 flex items-center justify-center shadow-lg"
+                        className="fab-button fab-accent rounded-lg w-10 h-10 min-h-10 p-0 flex items-center justify-center"
                         onClick={() => {
                           if (module.execute) {
                             module.execute()
@@ -1071,9 +1140,8 @@ const ChatPage = () => {
                           setIsFabOpen(false)
                         }}
                         title={module.name}
-                        style={{ backgroundColor: customTheme.colors.buttonAccent }}
                       >
-                        <span className="material-icons text-sm">{module.icon || "extension"}</span>
+                        <span className="material-icons text-sm text-white">{module.icon || "extension"}</span>
                       </button>
                     ))}
                   </div>
@@ -1082,7 +1150,7 @@ const ChatPage = () => {
                 {/* Main Send Button */}
                 <button
                   type="button"
-                  className="btn btn-primary rounded-lg w-12 h-12 min-h-12 p-0 flex items-center justify-center transition-transform duration-200 hover:scale-105 shadow-lg"
+                  className="fab-button rounded-lg w-12 h-12 min-h-12 p-0 flex items-center justify-center"
                   disabled={isLoading}
                   onClick={(e) => {
                     e.preventDefault()
@@ -1094,9 +1162,8 @@ const ChatPage = () => {
                       setIsFabOpen(true)
                     }
                   }}
-                  style={{ backgroundColor: customTheme.colors.buttonPrimary }}
                 >
-                  <span className={`material-icons transition-transform duration-200 ${isFabOpen ? "rotate-45" : ""}`}>
+                  <span className={`material-icons text-white theme-transition ${isFabOpen ? "rotate-45" : ""}`}>
                     {isFabOpen ? "close" : input.trim() ? "send" : "add"}
                   </span>
                 </button>
@@ -1105,7 +1172,7 @@ const ChatPage = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 
