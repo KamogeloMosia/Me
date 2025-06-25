@@ -1,6 +1,3 @@
-"use client"
-
-import { useState } from "react"
 import styles from "./ChatBubble.module.css"
 
 interface ChatBubbleProps {
@@ -10,54 +7,28 @@ interface ChatBubbleProps {
 }
 
 export default function ChatBubble({ message, isUser, timestamp }: ChatBubbleProps) {
-  const [copied, setCopied] = useState(false)
-  const [liked, setLiked] = useState<boolean | null>(null)
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(message)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
-
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
   }
 
   return (
-    <div className={`${styles.bubbleContainer} ${isUser ? styles.userContainer : styles.aiContainer} animate-in`}>
-      <div className={`${styles.bubble} ${isUser ? styles.userBubble : styles.aiBubble}`}>
-        <p>{message}</p>
+    <div className={`${styles.chatBubble} ${isUser ? styles.user : styles.ai}`}>
+      <div className={styles.avatarContainer}>
+        {isUser ? (
+          <div className={styles.userAvatar}>
+            <span>You</span>
+          </div>
+        ) : (
+          <div className={styles.aiAvatar}>
+            <img src="/ai-avatar.png" alt="AI Assistant" className="w-full h-full object-cover rounded-full" />
+          </div>
+        )}
+      </div>
 
-        <div className={styles.bubbleFooter}>
-          <span className={styles.timestamp}>{formatTime(timestamp)}</span>
-
-          {!isUser && (
-            <div className={styles.actions}>
-              <button
-                className={`${styles.actionButton} ${copied ? styles.actionActive : ""}`}
-                onClick={copyToClipboard}
-                aria-label="Copy message"
-              >
-                <span className="material-icons-outlined">{copied ? "check" : "content_copy"}</span>
-              </button>
-
-              <button
-                className={`${styles.actionButton} ${liked === true ? styles.actionActive : ""}`}
-                onClick={() => setLiked(true)}
-                aria-label="Like message"
-              >
-                <span className="material-icons-outlined">thumb_up</span>
-              </button>
-
-              <button
-                className={`${styles.actionButton} ${liked === false ? styles.actionActive : ""}`}
-                onClick={() => setLiked(false)}
-                aria-label="Dislike message"
-              >
-                <span className="material-icons-outlined">thumb_down</span>
-              </button>
-            </div>
-          )}
+      <div className={styles.messageContainer}>
+        <div className={styles.messageContent}>
+          <div className={styles.messageText}>{message}</div>
+          <div className={styles.timestamp}>{formatTime(timestamp)}</div>
         </div>
       </div>
     </div>

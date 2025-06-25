@@ -129,7 +129,7 @@ body {
 /* Custom theme-aware components */
 @layer components {
   .message-bubble {
-    @apply bg-base-100 border border-base-300;
+    @apply bg-white border border-gray-200 dark:bg-gray-800 dark:border-gray-700;
     background-color: var(--theme-background-secondary, hsl(var(--card)));
     border-color: rgba(var(--border-color, 220, 220, 220), var(--border-opacity, 0.3));
     transition: all 0.2s ease;
@@ -326,6 +326,28 @@ body {
 
   .fab-accent {
     background-color: var(--theme-accent, hsl(var(--accent))) !important;
+  }
+
+  /* Admin panel specific styles */
+  .admin-panel {
+    @apply bg-white dark:bg-gray-900;
+    font-size: var(--theme-font-size, 16px);
+    font-weight: var(--theme-font-weight, 400);
+  }
+
+  .admin-navbar {
+    @apply bg-white/95 dark:bg-gray-900/95 border-gray-200/30 dark:border-gray-700/30;
+    backdrop-filter: blur(8px);
+  }
+
+  .admin-card {
+    @apply bg-white/98 dark:bg-gray-800/98 border border-gray-200/30 dark:border-gray-700/30;
+    backdrop-filter: blur(4px);
+  }
+
+  .theme-customizable-modal {
+    @apply bg-white/95 dark:bg-gray-800/95 border border-gray-200/30 dark:border-gray-700/30;
+    backdrop-filter: blur(8px);
   }
 }
 
