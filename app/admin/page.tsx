@@ -16,111 +16,27 @@ interface Module {
   uploadDate: string
 }
 
-interface ThemeSettings {
-  modalBgOpacity: number
-  panelBgOpacity: number
-  borderOpacity: number
-  borderColor: string
-  modalBorderColor: string
-  panelBorderColor: string
-}
-
 export default function AdminPage() {
   const [modules, setModules] = useState<Module[]>([])
   const [isUploading, setIsUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [isDarkMode, setIsDarkMode] = useState(false)
-  const [showThemeModal, setShowThemeModal] = useState(false)
-  const [isThemeLoaded, setIsThemeLoaded] = useState(false)
-  const [themeSettings, setThemeSettings] = useState<ThemeSettings>({
-    modalBgOpacity: 0.95,
-    panelBgOpacity: 0.98,
-    borderOpacity: 0.3,
-    borderColor: "220, 220, 220",
-    modalBorderColor: "200, 200, 200",
-    panelBorderColor: "210, 210, 210",
-  })
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     // Load theme preference
-    const initializeTheme = () => {
-      const savedTheme = localStorage.getItem("theme")
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
-
-      let themeToApply = "light"
-
-      if (savedTheme) {
-        themeToApply = savedTheme
-      } else if (prefersDark) {
-        themeToApply = "dark"
-      }
-
-      const newIsDarkMode = themeToApply === "dark"
-      setIsDarkMode(newIsDarkMode)
-      document.documentElement.setAttribute("data-theme", themeToApply)
-      document.body.className = themeToApply
-      localStorage.setItem("theme", themeToApply)
-
-      // Set default theme colors
-      setThemeSettings((prev) => ({
-        ...prev,
-        borderColor: newIsDarkMode ? "60, 60, 60" : "220, 220, 220",
-        modalBorderColor: newIsDarkMode ? "80, 80, 80" : "200, 200, 200",
-        panelBorderColor: newIsDarkMode ? "70, 70, 70" : "210, 210, 210",
-      }))
-
-      setIsThemeLoaded(true)
-    }
-
-    initializeTheme()
-
-    // Load saved theme settings
-    const savedSettings = localStorage.getItem("themeSettings")
-    if (savedSettings) {
-      try {
-        const settings = JSON.parse(savedSettings)
-        setThemeSettings(settings)
-        applyThemeSettings(settings)
-      } catch (error) {
-        console.error("Error loading theme settings:", error)
-      }
+    const savedTheme = localStorage.getItem("theme")
+    if (savedTheme === "dark") {
+      setIsDarkMode(true)
+      document.documentElement.setAttribute("data-theme", "dark")
+    } else {
+      setIsDarkMode(false)
+      document.documentElement.setAttribute("data-theme", "light")
     }
 
     // Load modules
     loadModules()
   }, [])
-
-  const applyThemeSettings = (settings: ThemeSettings) => {
-    const root = document.documentElement
-    root.style.setProperty("--modal-bg-opacity", settings.modalBgOpacity.toString())
-    root.style.setProperty("--panel-bg-opacity", settings.panelBgOpacity.toString())
-    root.style.setProperty("--border-opacity", settings.borderOpacity.toString())
-    root.style.setProperty("--border-color", settings.borderColor)
-    root.style.setProperty("--modal-border-color", settings.modalBorderColor)
-    root.style.setProperty("--panel-border-color", settings.panelBorderColor)
-  }
-
-  const handleThemeSettingsChange = (key: keyof ThemeSettings, value: number | string) => {
-    const newSettings = { ...themeSettings, [key]: value }
-    setThemeSettings(newSettings)
-    applyThemeSettings(newSettings)
-    localStorage.setItem("themeSettings", JSON.stringify(newSettings))
-  }
-
-  const resetThemeSettings = () => {
-    const defaultSettings: ThemeSettings = {
-      modalBgOpacity: 0.95,
-      panelBgOpacity: 0.98,
-      borderOpacity: 0.3,
-      borderColor: isDarkMode ? "60, 60, 60" : "220, 220, 220",
-      modalBorderColor: isDarkMode ? "80, 80, 80" : "200, 200, 200",
-      panelBorderColor: isDarkMode ? "70, 70, 70" : "210, 210, 210",
-    }
-    setThemeSettings(defaultSettings)
-    applyThemeSettings(defaultSettings)
-    localStorage.setItem("themeSettings", JSON.stringify(defaultSettings))
-  }
 
   const loadModules = async () => {
     try {
@@ -209,40 +125,13 @@ export default function AdminPage() {
 
   const toggleTheme = () => {
     const newTheme = isDarkMode ? "light" : "dark"
-    const newIsDarkMode = !isDarkMode
-
-    setIsDarkMode(newIsDarkMode)
+    setIsDarkMode(!isDarkMode)
     document.documentElement.setAttribute("data-theme", newTheme)
-    document.body.className = newTheme
     localStorage.setItem("theme", newTheme)
-
-    // Update border colors for new theme
-    const newBorderColors = newIsDarkMode
-      ? { borderColor: "60, 60, 60", modalBorderColor: "80, 80, 80", panelBorderColor: "70, 70, 70" }
-      : { borderColor: "220, 220, 220", modalBorderColor: "200, 200, 200", panelBorderColor: "210, 210, 210" }
-
-    const newSettings = { ...themeSettings, ...newBorderColors }
-    setThemeSettings(newSettings)
-    applyThemeSettings(newSettings)
-    localStorage.setItem("themeSettings", JSON.stringify(newSettings))
-
-    // Force theme update
-    setTimeout(() => {
-      document.documentElement.style.colorScheme = newTheme
-    }, 50)
-  }
-
-  // Don't render until theme is loaded
-  if (!isThemeLoaded) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="loading loading-spinner loading-lg"></div>
-      </div>
-    )
   }
 
   return (
-    <div className="admin-panel">
+    <div className="min-h-screen bg-base-200">
       {/* Google Fonts */}
       <link
         href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap"
@@ -250,120 +139,8 @@ export default function AdminPage() {
       />
       <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 
-      {/* Theme Customization Modal */}
-      {showThemeModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div
-            className="absolute inset-0 bg-black bg-opacity-70 backdrop-blur-sm"
-            onClick={() => setShowThemeModal(false)}
-          />
-          <div className="relative theme-customizable-modal rounded-lg shadow-2xl border-2 p-6 w-full max-w-2xl mx-4 z-10">
-            <h3 className="font-bold text-lg mb-6 text-base-content">Theme Customization</h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Opacity Settings */}
-              <div className="space-y-4">
-                <h4 className="font-semibold text-base-content">Opacity Settings</h4>
-
-                <div>
-                  <label className="block text-sm font-medium text-base-content mb-2">
-                    Modal Background Opacity: {(themeSettings.modalBgOpacity * 100).toFixed(0)}%
-                  </label>
-                  <input
-                    type="range"
-                    min="0.5"
-                    max="1"
-                    step="0.05"
-                    value={themeSettings.modalBgOpacity}
-                    onChange={(e) => handleThemeSettingsChange("modalBgOpacity", Number.parseFloat(e.target.value))}
-                    className="range range-primary w-full"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-base-content mb-2">
-                    Panel Background Opacity: {(themeSettings.panelBgOpacity * 100).toFixed(0)}%
-                  </label>
-                  <input
-                    type="range"
-                    min="0.5"
-                    max="1"
-                    step="0.05"
-                    value={themeSettings.panelBgOpacity}
-                    onChange={(e) => handleThemeSettingsChange("panelBgOpacity", Number.parseFloat(e.target.value))}
-                    className="range range-primary w-full"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-base-content mb-2">
-                    Border Opacity: {(themeSettings.borderOpacity * 100).toFixed(0)}%
-                  </label>
-                  <input
-                    type="range"
-                    min="0.1"
-                    max="1"
-                    step="0.1"
-                    value={themeSettings.borderOpacity}
-                    onChange={(e) => handleThemeSettingsChange("borderOpacity", Number.parseFloat(e.target.value))}
-                    className="range range-primary w-full"
-                  />
-                </div>
-              </div>
-
-              {/* Color Settings */}
-              <div className="space-y-4">
-                <h4 className="font-semibold text-base-content">Border Colors (RGB)</h4>
-
-                <div>
-                  <label className="block text-sm font-medium text-base-content mb-2">General Border Color</label>
-                  <input
-                    type="text"
-                    value={themeSettings.borderColor}
-                    onChange={(e) => handleThemeSettingsChange("borderColor", e.target.value)}
-                    placeholder="220, 220, 220"
-                    className="input input-bordered w-full rounded-lg"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-base-content mb-2">Modal Border Color</label>
-                  <input
-                    type="text"
-                    value={themeSettings.modalBorderColor}
-                    onChange={(e) => handleThemeSettingsChange("modalBorderColor", e.target.value)}
-                    placeholder="200, 200, 200"
-                    className="input input-bordered w-full rounded-lg"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-base-content mb-2">Panel Border Color</label>
-                  <input
-                    type="text"
-                    value={themeSettings.panelBorderColor}
-                    onChange={(e) => handleThemeSettingsChange("panelBorderColor", e.target.value)}
-                    placeholder="210, 210, 210"
-                    className="input input-bordered w-full rounded-lg"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="flex gap-3 justify-end mt-6">
-              <button className="btn btn-outline rounded-lg" onClick={resetThemeSettings}>
-                Reset to Default
-              </button>
-              <button className="btn btn-primary rounded-lg" onClick={() => setShowThemeModal(false)}>
-                Apply Changes
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Header */}
-      <div className="admin-navbar navbar border-b-2 shadow-lg">
+      <div className="navbar bg-base-100 border-b border-base-300">
         <div className="navbar-start">
           <Link href="/" className="btn btn-ghost rounded-lg">
             <span className="material-icons">arrow_back</span>
@@ -375,24 +152,17 @@ export default function AdminPage() {
             Admin Panel
           </h1>
         </div>
-        <div className="navbar-end flex gap-2">
-          <button className="btn btn-ghost btn-circle" onClick={() => setShowThemeModal(true)} title="Theme Settings">
-            <span className="material-icons">palette</span>
-          </button>
-          <button
-            className="btn btn-ghost btn-circle"
-            onClick={toggleTheme}
-            title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-          >
+        <div className="navbar-end">
+          <button className="btn btn-ghost btn-circle" onClick={toggleTheme}>
             <span className="material-icons">{isDarkMode ? "light_mode" : "dark_mode"}</span>
           </button>
         </div>
       </div>
 
-      <div className="container mx-auto p-6 max-w-6xl relative">
+      <div className="container mx-auto p-6 max-w-6xl">
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="admin-card stat rounded-lg shadow-lg">
+          <div className="stat bg-base-100 rounded-lg shadow">
             <div className="stat-figure text-primary">
               <span className="material-icons text-3xl">extension</span>
             </div>
@@ -400,7 +170,7 @@ export default function AdminPage() {
             <div className="stat-value text-primary">{modules.length}</div>
           </div>
 
-          <div className="admin-card stat rounded-lg shadow-lg">
+          <div className="stat bg-base-100 rounded-lg shadow">
             <div className="stat-figure text-success">
               <span className="material-icons text-3xl">check_circle</span>
             </div>
@@ -408,7 +178,7 @@ export default function AdminPage() {
             <div className="stat-value text-success">{modules.filter((m) => m.status === "active").length}</div>
           </div>
 
-          <div className="admin-card stat rounded-lg shadow-lg">
+          <div className="stat bg-base-100 rounded-lg shadow">
             <div className="stat-figure text-warning">
               <span className="material-icons text-3xl">storage</span>
             </div>
@@ -420,7 +190,7 @@ export default function AdminPage() {
         </div>
 
         {/* Upload Section */}
-        <div className="admin-card card shadow-lg mb-8 rounded-lg">
+        <div className="card bg-base-100 shadow-lg mb-8 rounded-lg">
           <div className="card-body">
             <h2 className="card-title flex items-center gap-2">
               <span className="material-icons">cloud_upload</span>
@@ -456,7 +226,7 @@ export default function AdminPage() {
         </div>
 
         {/* Modules List */}
-        <div className="admin-card card shadow-lg rounded-lg">
+        <div className="card bg-base-100 shadow-lg rounded-lg">
           <div className="card-body">
             <h2 className="card-title flex items-center gap-2">
               <span className="material-icons">view_module</span>
@@ -531,7 +301,7 @@ export default function AdminPage() {
         </div>
 
         {/* Module Development Guide */}
-        <div className="admin-card card shadow-lg mt-8 rounded-lg">
+        <div className="card bg-base-100 shadow-lg mt-8 rounded-lg">
           <div className="card-body">
             <h2 className="card-title flex items-center gap-2">
               <span className="material-icons">code</span>
